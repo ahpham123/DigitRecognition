@@ -1,12 +1,8 @@
 import numpy as np
 import pandas as pd
 import matplotlib
+import pickle
 from matplotlib import pyplot as plt
-
-# import os
-# for dirname, _, filenames in os.walk('/'):
-#     for filename in filenames:
-#         print(os.path.join(dirname, filename))
 
 def init_parameters():
     W1 = np.random.rand(10, 784) - 0.5
@@ -14,6 +10,11 @@ def init_parameters():
     W2 = np.random.rand(10, 10) - 0.5
     b2 = np.random.rand(10, 1) - 0.5
     return W1, b1, W2, b2
+
+def load_parameters(filename='model_weights.pkl'):
+    with open(filename, 'rb') as f:
+        parameters = pickle.load(f)
+    return parameters['W1'], parameters['b1'], parameters['W2'], parameters['b2']
 
 def ReLU(Z):
     return np.maximum(0, Z)
@@ -67,32 +68,20 @@ def get_accuracy(predictions, Y):
 def make_prediction(X, W1, b1, W2, b2):
     _, _, _, A2 = forward_prop(W1, b1, W2, b2, X)
     predictions = get_predictions(A2)
-    return predictions
+    probabilities = A2
+    return predictions, probabilities
 
-def test_predictions(index, W1, b1, W2, b2):
-    current_image = X_train[:, index, None]
-    prediction = make_prediction(X_train[:, index, None], W1, b1, W2, b2)
-    label = Y_train[index]
-    print("Prediction: ", prediction)
-    print("Label: ", label)
-
-    current_image = current_image.reshape((28, 28)) * 255
-    plt.gray()
-    plt.imshow(current_image, interpolation='nearest')
-    plt.show()
-
-def find_wrong(iterations, W1, b1, W2, b2):
-    for i in range(0, iterations):
-        current_image = X_train[:, i, None]
-        prediction = make_prediction(X_train[:, i, None], W1, b1, W2, b2)
-        label = Y_train[i]
-        if prediction[0] != label:
-            print("Prediction: ", prediction)
-            print("Label: ", label)
-            current_image = current_image.reshape((28, 28)) * 255
-            plt.gray()
-            plt.imshow(current_image, interpolation='nearest')
-            plt.show()
+def save_parameters(W1, b1, W2, b2, filename='model_weights.pkl'):
+    """Save the trained parameters to a file"""
+    parameters = {
+        'W1': W1,
+        'b1': b1,
+        'W2': W2,
+        'b2': b2
+    }
+    with open(filename, 'wb') as f:
+        pickle.dump(parameters, f)
+    print(f"Parameters saved to {filename}")
 
 def gradient_descent(X, Y, iterations, alpha):
     W1, b1, W2, b2 = init_parameters()
@@ -106,8 +95,7 @@ def gradient_descent(X, Y, iterations, alpha):
     return W1, b1, W2, b2
 
 if __name__ == "__main__":
-    # matplotlib.use('TkAgg')
-    data = pd.read_csv('./train.csv')
+    data = pd.read_csv('./dataset/train.csv')
     data.head()
 
     data = np.array(data)
@@ -124,5 +112,4 @@ if __name__ == "__main__":
     X_train = data_train[1:n]
     X_train = X_train / 255.0
     W1, b1, W2, b2 = gradient_descent(X_train, Y_train, 500, 0.1)
-    test_predictions(83, W1, b1, W2, b2)
-    find_wrong(83, W1, b1, W2, b2)
+    save_parameters(W1, b1, W2, b2)
