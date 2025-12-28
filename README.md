@@ -11,7 +11,7 @@ source myenv/bin/activate
 pip install requirements.txt
 ```
 
-# Step 3: Run Neural Network
+# Step 3: Training
 ```terminal
 python3 NN.py
 ```
