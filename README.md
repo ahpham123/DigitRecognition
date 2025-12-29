@@ -15,3 +15,11 @@ pip install -r requirements.txt
 ```terminal
 python3 NN.py
 ```
+
+Backend
+
+python3 app.py
+
+Frontend
+
+python3 -m http.server 8000

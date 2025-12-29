@@ -77,6 +77,7 @@ function fillPixelWithBrush(gridX, gridY) {
 }
 
 function startDrawing(e) {
+    e.preventDefault();
     isDrawing = true;
     const { gridX, gridY } = getGridPosition(e);
     fillPixelWithBrush(gridX, gridY);
@@ -90,18 +91,22 @@ function draw(e) {
     fillPixelWithBrush(gridX, gridY);
 }
 
-function stopDrawing() {
+function stopDrawing(e) {
+    if (e) e.preventDefault();
     isDrawing = false;
 }
 
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
-canvas.addEventListener('mouseout', stopDrawing);
+canvas.addEventListener('mouseleave', stopDrawing);
 
 canvas.addEventListener('touchstart', startDrawing);
 canvas.addEventListener('touchmove', draw);
 canvas.addEventListener('touchend', stopDrawing);
+canvas.addEventListener('touchcancel', stopDrawing);
+
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
 clearBtn.addEventListener('click', () => {
     pixels = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(0));
@@ -164,5 +169,6 @@ classifyBtn.addEventListener('click', async () => {
         loadingDiv.classList.add('hidden');
         classifyBtn.disabled = false;
     }
-});        
+});
+
 drawGrid();
