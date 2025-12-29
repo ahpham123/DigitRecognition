@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 # Step 3: Training
 ```terminal
-python3 NN.py
+python3 ./neuralnetwork.py
 ```
 
 Backend
