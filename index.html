@@ -3,40 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNIST Digit Recognizer</title>
+    <title>Digit Recognizer</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>🎨 MNIST Digit Recognizer</h1>
-        <p class="subtitle">Draw a digit (0-9) - white on black like MNIST</p>
+        <h1>MNIST Digit Recognizer</h1>
+        <p class="subtitle">Draw a digit (0-9) and see how the neural network classifies it</p>
         
-        <div class="canvas-container">
-            <canvas id="canvas" width="280" height="280"></canvas>
-        </div>
-        
-        <div class="controls">
-            <button id="classifyBtn">Classify</button>
-            <button id="clearBtn">Clear</button>
-        </div>
-        
-        <div id="loading" class="loading hidden">
-            Classifying...
-        </div>
-        
-        <div id="result" class="result hidden">
-            <div class="prediction">Prediction: <span id="predictionValue">-</span></div>
-            <div class="confidence">Confidence: <span id="confidenceValue">-</span></div>
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="canvas-container">
+                    <canvas id="canvas" width="280" height="280"></canvas>
+                </div>
+                
+                <div class="debug-toggle">
+                    <input type="checkbox" id="debugMode" checked>
+                    <label for="debugMode">Show Preprocessing</label>
+                </div>
+                
+                <div class="controls">
+                    <button id="classifyBtn">Classify</button>
+                    <button id="clearBtn">Clear</button>
+                </div>
+            </div>
             
-            <div class="probabilities">
-                <div class="prob-header">All Probabilities</div>
-                <div id="probabilitiesContainer"></div>
+            <div class="right-panel">
+                <div id="loading" class="loading hidden">
+                    Classifying...
+                </div>
+                
+                <div id="result" class="result hidden">
+                    <div class="prediction">Prediction: <span id="predictionValue">-</span></div>
+                    <div class="confidence">Confidence: <span id="confidenceValue">-</span></div>
+                    
+                    <div class="probabilities">
+                        <div class="prob-header">All Probabilities</div>
+                        <div id="probabilitiesContainer"></div>
+                    </div>
+                </div>
+                
+                <div id="error" class="error hidden"></div>
             </div>
         </div>
         
-        <div id="error" class="error hidden"></div>
+        <div id="debugPanel" class="debug-panel hidden">
+            <div class="debug-title">Preprocessing Pipeline Visualization</div>
+            <div class="debug-images" id="debugImagesContainer"></div>
+        </div>
     </div>
-
+    
     <script src="script.js"></script>
 </body>
 </html>

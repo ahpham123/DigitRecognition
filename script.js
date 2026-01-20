@@ -5,6 +5,9 @@ const clearBtn = document.getElementById('clearBtn');
 const resultDiv = document.getElementById('result');
 const loadingDiv = document.getElementById('loading');
 const errorDiv = document.getElementById('error');
+const debugModeCheckbox = document.getElementById('debugMode');
+const debugPanel = document.getElementById('debugPanel');
+const debugImagesContainer = document.getElementById('debugImagesContainer');
 
 const GRID_SIZE = 28;
 const PIXEL_SIZE = canvas.width / GRID_SIZE;
@@ -57,7 +60,6 @@ function fillPixel(gridX, gridY, intensity = 255) {
 function fillPixelWithBrush(gridX, gridY) {
     fillPixel(gridX, gridY, 255);
     
-    // Brush effect
     const neighbors = [
         {x: gridX-1, y: gridY, intensity: 80},
         {x: gridX+1, y: gridY, intensity: 80},
@@ -115,21 +117,28 @@ clearBtn.addEventListener('click', () => {
     drawGrid();
     resultDiv.classList.add('hidden');
     errorDiv.classList.add('hidden');
+    debugPanel.classList.add('hidden');
 });
 
 classifyBtn.addEventListener('click', async () => {
     try {
         resultDiv.classList.add('hidden');
         errorDiv.classList.add('hidden');
+        debugPanel.classList.add('hidden');
         loadingDiv.classList.remove('hidden');
         classifyBtn.disabled = true;
+        
+        const debugMode = debugModeCheckbox.checked;
         
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ pixels: pixels })
+            body: JSON.stringify({ 
+                pixels: pixels,
+                debug: debugMode
+            })
         });
         
         if (!response.ok) {
@@ -160,6 +169,32 @@ classifyBtn.addEventListener('click', async () => {
         }
         
         resultDiv.classList.remove('hidden');
+        
+        if (debugMode && data.debug_images) {
+            debugImagesContainer.innerHTML = '';
+            
+            const stages = [
+                { key: 'original', label: 'Original (28×28)' },
+                { key: 'cropped', label: 'Cropped' },
+                { key: 'resized', label: 'Resized (~20×20)' },
+                { key: 'before_blur', label: 'Centered (28×28)' },
+                { key: 'final', label: 'Final (after blur)' }
+            ];
+            
+            stages.forEach(stage => {
+                if (data.debug_images[stage.key]) {
+                    const container = document.createElement('div');
+                    container.className = 'debug-image-container';
+                    container.innerHTML = `
+                        <div class="debug-image-label">${stage.label}</div>
+                        <img src="${data.debug_images[stage.key]}" class="debug-image" alt="${stage.label}">
+                    `;
+                    debugImagesContainer.appendChild(container);
+                }
+            });
+            
+            debugPanel.classList.remove('hidden');
+        }
         
     } catch (error) {
         errorDiv.textContent = 'Error: ' + error.message + 
