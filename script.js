@@ -163,7 +163,7 @@ classifyBtn.addEventListener('click', async () => {
                 <div class="prob-bar-container">
                     <div class="prob-bar" style="width: ${prob}%"></div>
                 </div>
-                <span class="prob-value">${prob.toFixed(1)}%</span>
+                <span class="prob-value">${prob.toFixed(2)}%</span>
             `;
             probContainer.appendChild(item);
         }
